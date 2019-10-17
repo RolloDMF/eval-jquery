@@ -92,7 +92,7 @@
                     var elem = listes[index]['elements'];
                     var listeEnCour = $('#liste' + id);
 
-                    listeEnCour.append('<button class="supprList" data-liste"' + listeName + '">X</button>');
+                    listeEnCour.append('<button class="supprList" data-liste="' + listeName + '">X</button>');
                     listeEnCour.append('<h2>' + listeName + '</h2>');
                     
                     for (let j = 0; j < elem.length; j++) {
@@ -119,6 +119,13 @@
 
                 var supprElemButton = $('.supprElem');
                 var supprListButton = $('.supprList');
+
+                for (let index = 0; index < supprListButton.length; index++) {
+                    
+                    $(supprListButton[index]).click(supprList);
+                    $(supprElemButton[index]).click(supprElem);
+                    
+                }
 
                 
         }
@@ -208,6 +215,32 @@
 
         }
 
+        function supprList() {
+
+            var name = $(this).data('liste');
+
+            console.log(name);
+            console.log(this);
+            
+
+
+            for (let i = 0; i < datas.todoListes.length; i++) {
+                console.log(datas.todoListes[i].name);
+                
+                if (datas.todoListes[i].name == name) {
+                    datas.todoListes.splice([i],1);
+                }
+                
+            }
+
+            console.log(datas);
+            
+
+        }
+
+        function supprElem() {
+            console.log('elem'); 
+        }
     }
 </script>
 </html>
