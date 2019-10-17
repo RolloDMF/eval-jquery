@@ -1,0 +1,26 @@
+
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Test ALC</title>
+		<script src="./jquery-3.4.1.min.js"></script>
+	</head>
+
+	<body>
+        <div id="frame">
+            <input type="text" name="nom" id="nom" placeholder="nom">
+            <input type="text" name="prenom" id="prenom" placeholder="prenom">
+        </div>
+        <button> + </button>
+	</body>
+	<script>
+        $('button').click(function () {
+            
+            var nom = $('#nom').val(); 
+            var prenom = $('#prenom').val();        
+
+            $('#frame').prepend("<div>" + nom + " " + prenom + "</div>");
+        });
+    </script>
+</html>

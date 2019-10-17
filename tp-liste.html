@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="./jquery-3.4.1.min.js"></script>
+    <title>Tp liste</title>
+</head>
+<body>
+    <style>
+        #formulaire input{
+            display: block;
+        }
+        #formulaire button{
+            margin-top: 10px;
+        }
+        .created-listes{
+            border: solid 1px black;
+        }
+    </style>
+
+    <h1>Todo Liste</h1>
+    <div id="formulaire">
+        <label for="utilisateur">Loging</label>
+        <input type="text" name="utilisateur" id="utilisateur">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password">
+        <button id="inscription">S'inscrir</button>
+        <button id="connexion">Se connecter</button>
+    </div>
+    <div id="listes">
+    </div>
+    <script>
+        $('#connexion').click(connexion);
+        $('#inscription').click(connexion);
+
+        var id = 0
+
+        function connexion() {
+
+            $('#formulaire').hide();
+
+            var utilisateur = $('#utilisateur').val();
+            var password = $('#password').val();
+            var typeConnexion = $(this).attr('id');
+            var listeFrame = $('#listes');
+            
+            if (typeConnexion == 'inscription') {
+
+                $.ajax({
+                    url: "http://92.222.69.104/todo/create/" + utilisateur + "/" + password
+                }).done(function(d) {
+                    alert('Bienvenue ' + utilisateur);
+                    $.ajax({
+                        url: "http://92.222.69.104/todo/listes",
+                        headers: { "login": utilisateur, "password": password }
+                    }).done(function(d) {
+                        showListe(d);
+                    });
+                });
+
+            }else{
+
+                $.ajax({
+                    url: "http://92.222.69.104/todo/listes",
+                    headers: { "login": utilisateur, "password": password }
+                }).done(function(d) {
+                    showListe(d);
+                });
+            }
+
+            function showListe(d) {
+                                         
+                var listes = d.todoListes;
+                    
+                    for (let index = 0; index < listes.length; index++) {
+
+                        listeFrame.append('<ul id="liste' + id + '" class="created-listes"></ul>');
+
+                        var elem = listes[index]['elements'];
+                        var listeEnCour = $('#liste' + id);
+
+                        listeEnCour.append('<h2>' + listes[index]['name'] + '</h2>')
+                        console.log(elem);
+                        
+
+                        for (let j = 0; j < elem.length; j++) {
+                            listeEnCour.append('<li class="element">' + elem[j] + '</li>')
+                        }
+
+                        listeEnCour.append('<div id=div' + id + '></div>');
+                        
+                        listeEnCour.append('<button data-button="div' + id + '" id="ajouter' + id + '"> + </button>');
+
+                        $("#ajouter" + id).click(addElem);
+
+                        id++;
+                    }
+
+                    $('#listes').append('<div id="ajoutFrame"></div>');
+
+                    $('#ajoutFrame').append('<button id="ajouter"> + </button>');
+
+                    $('#ajouter').click(addListe);
+            }
+
+            function addListe() {
+
+                $("#ajoutFrame").prepend('<input type="text" id="newListe">');
+                $("#ajoutFrame").prepend('<button id="validNewListe">Valider</button>');
+                $("#ajoutFrame").prepend('<h2>Nommez votre nouvelle liste</h2>');
+
+                $(this).hide();
+
+                $("#validNewListe").click(createList);
+                
+            }
+
+            function addElem() {
+
+                var idDiv = $(this).data('button');
+                var div = $('#' + idDiv);
+
+                div.prepend('<input type="text" id="newElem">');
+                div.prepend('<button id="validNewElem">Valider</button>');
+                div.prepend('<h3>Nommez votre element liste</h3>');
+
+                $(this).hide();
+
+            }
+            
+            function createList() {
+                
+            }
+        }
+    </script>
+</body>
+</html>

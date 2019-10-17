@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Mon premier exemple JQuery</title>
+		<script src="./jquery-3.4.1.min.js"></script>
+	</head>
+	<style>
+		#resultat {
+			background-color : lightblue;
+			width : 200px;
+			height : 200px;
+		}
+	</style>
+	<body>
+		<button onclick="vaChercher()"> Va chercher </button>
+		<input id="nom" placeholder="Nom" />
+		<input id="prenom" placeholder="Prenom" />
+		<div id="resultat">
+		
+		</div>
+	</body>
+	<script>
+	
+		function vaChercher(){
+			var nom = $("#nom").val();
+			var prenom = $("#prenom").val();
+			$.ajax({
+                url: "http://92.222.69.104/exercice/bonjour4",
+                headers: {"nom" : "Rodrigue", "prenom" : "JURIENS"}
+			}).done(function(d) {
+				$("#resultat").html(d);
+			});
+		}		
+		
+		
+	</script>
+</html>
