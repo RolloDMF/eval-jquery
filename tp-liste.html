@@ -18,6 +18,12 @@
         .created-listes{
             border: solid 1px black;
         }
+        .supprElem, .supprList{
+            background-color: red;
+            position: relative;
+            top: 0px;
+            left: 98%;
+        }
     </style>
 
     <h1>Todo Liste</h1>
@@ -75,20 +81,23 @@
         function showListe(d) {
                                   
             var listeFrame = $('#listes');
-
             var listes = d.todoListes;
                 
                 for (let index = 0; index < listes.length; index++) {
+                    
+                    var listeName =  listes[index]['name'];
 
                     listeFrame.append('<ul id="liste' + id + '" class="created-listes"></ul>');
 
                     var elem = listes[index]['elements'];
                     var listeEnCour = $('#liste' + id);
 
-                    listeEnCour.append('<h2>' + listes[index]['name'] + '</h2>')
+                    listeEnCour.append('<button class="supprList" data-liste"' + listeName + '">X</button>');
+                    listeEnCour.append('<h2>' + listeName + '</h2>');
                     
                     for (let j = 0; j < elem.length; j++) {
-                        listeEnCour.append('<li class="element">' + elem[j] + '</li>')
+                        listeEnCour.append('<li class="element">' + elem[j] + '</li>').append('<button class="supprElem" data-liste="' + listeName + '" data-position="' + j + '">X</button>');
+                        
                     }
 
                     listeEnCour.append('<div id=div' + id + '></div>');
@@ -107,6 +116,11 @@
                 $('#ajouter').click(addListe);
 
                 datas = d;
+
+                var supprElemButton = $('.supprElem');
+                var supprListButton = $('.supprList');
+
+                
         }
 
         function addListe() {
@@ -193,6 +207,7 @@
             });
 
         }
+
     }
 </script>
 </html>
