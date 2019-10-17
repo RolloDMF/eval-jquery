@@ -31,109 +31,168 @@
     </div>
     <div id="listes">
     </div>
-    <script>
-        $('#connexion').click(connexion);
-        $('#inscription').click(connexion);
+</body>
+<script>
+    $('#connexion').click(connexion);
+    $('#inscription').click(connexion);
 
-        var id = 0
+    var id = 0
 
-        function connexion() {
+    function connexion() {
 
-            $('#formulaire').hide();
+        $('#formulaire').hide();
 
-            var utilisateur = $('#utilisateur').val();
-            var password = $('#password').val();
-            var typeConnexion = $(this).attr('id');
-            var listeFrame = $('#listes');
-            
-            if (typeConnexion == 'inscription') {
+        var utilisateur = $('#utilisateur').val();
+        var password = $('#password').val();
+        var typeConnexion = $(this).attr('id');
 
-                $.ajax({
-                    url: "http://92.222.69.104/todo/create/" + utilisateur + "/" + password
-                }).done(function(d) {
-                    alert('Bienvenue ' + utilisateur);
-                    $.ajax({
-                        url: "http://92.222.69.104/todo/listes",
-                        headers: { "login": utilisateur, "password": password }
-                    }).done(function(d) {
-                        showListe(d);
-                    });
-                });
+        var datas;
+        
+        if (typeConnexion == 'inscription') {
 
-            }else{
-
+            $.ajax({
+                url: "http://92.222.69.104/todo/create/" + utilisateur + "/" + password
+            }).done(function(d) {
+                alert('Bienvenue ' + utilisateur);
                 $.ajax({
                     url: "http://92.222.69.104/todo/listes",
                     headers: { "login": utilisateur, "password": password }
                 }).done(function(d) {
                     showListe(d);
                 });
-            }
+            });
 
-            function showListe(d) {
-                                         
-                var listes = d.todoListes;
+        }else{
+
+            $.ajax({
+                url: "http://92.222.69.104/todo/listes",
+                headers: { "login": utilisateur, "password": password }
+            }).done(function(d) {
+                showListe(d);
+            });
+        }
+
+        function showListe(d) {
+                                  
+            var listeFrame = $('#listes');
+
+            var listes = d.todoListes;
+                
+                for (let index = 0; index < listes.length; index++) {
+
+                    listeFrame.append('<ul id="liste' + id + '" class="created-listes"></ul>');
+
+                    var elem = listes[index]['elements'];
+                    var listeEnCour = $('#liste' + id);
+
+                    listeEnCour.append('<h2>' + listes[index]['name'] + '</h2>')
                     
-                    for (let index = 0; index < listes.length; index++) {
-
-                        listeFrame.append('<ul id="liste' + id + '" class="created-listes"></ul>');
-
-                        var elem = listes[index]['elements'];
-                        var listeEnCour = $('#liste' + id);
-
-                        listeEnCour.append('<h2>' + listes[index]['name'] + '</h2>')
-                        console.log(elem);
-                        
-
-                        for (let j = 0; j < elem.length; j++) {
-                            listeEnCour.append('<li class="element">' + elem[j] + '</li>')
-                        }
-
-                        listeEnCour.append('<div id=div' + id + '></div>');
-                        
-                        listeEnCour.append('<button data-button="div' + id + '" id="ajouter' + id + '"> + </button>');
-
-                        $("#ajouter" + id).click(addElem);
-
-                        id++;
+                    for (let j = 0; j < elem.length; j++) {
+                        listeEnCour.append('<li class="element">' + elem[j] + '</li>')
                     }
 
-                    $('#listes').append('<div id="ajoutFrame"></div>');
+                    listeEnCour.append('<div id=div' + id + '></div>');
+                    
+                    listeEnCour.append('<button data-id="liste' + id + '" data-button="div' + id + '" id="ajouter' + id + '"> + </button>');
 
-                    $('#ajoutFrame').append('<button id="ajouter"> + </button>');
+                    $("#ajouter" + id).click(addElem);
 
-                    $('#ajouter').click(addListe);
-            }
+                    id++;
+                }
 
-            function addListe() {
+                $('#listes').append('<div id="ajoutFrame"></div>');
 
-                $("#ajoutFrame").prepend('<input type="text" id="newListe">');
-                $("#ajoutFrame").prepend('<button id="validNewListe">Valider</button>');
-                $("#ajoutFrame").prepend('<h2>Nommez votre nouvelle liste</h2>');
+                $('#ajoutFrame').append('<button id="ajouter"> + </button>');
 
-                $(this).hide();
+                $('#ajouter').click(addListe);
 
-                $("#validNewListe").click(createList);
-                
-            }
-
-            function addElem() {
-
-                var idDiv = $(this).data('button');
-                var div = $('#' + idDiv);
-
-                div.prepend('<input type="text" id="newElem">');
-                div.prepend('<button id="validNewElem">Valider</button>');
-                div.prepend('<h3>Nommez votre element liste</h3>');
-
-                $(this).hide();
-
-            }
-            
-            function createList() {
-                
-            }
+                datas = d;
         }
-    </script>
-</body>
+
+        function addListe() {
+
+            $("#ajoutFrame").prepend('<input type="text" id="newListe">');
+            $("#ajoutFrame").prepend('<button id="validNewListe">Valider</button>');
+            $("#ajoutFrame").prepend('<h2>Nommez votre nouvelle liste</h2>');
+
+            $(this).hide();
+
+            $("#validNewListe").click(createList);
+            
+        }
+
+        function addElem() {
+            
+            var idDiv = $(this).data('button');
+            var idName = $(this).data('id');
+            var div = $('#' + idDiv);
+
+            div.prepend('<input type="text" id="newElem">');
+            div.prepend('<button id="validNewElem">Valider</button>');
+            div.prepend('<h3>Nommez votre element liste</h3>');
+
+            $(this).hide();
+
+            $("#validNewElem").click([idName], createElem);
+
+        }
+        
+        function createList() {
+
+            var name = $('#newListe').val();
+
+            var index = datas.todoListes.length;
+            
+            datas.todoListes[index] = { "name": name, "elements": [] };
+
+            $('#listes').remove();
+
+            $('#formulaire').after('<div id="listes"></div>');
+
+            modification();
+   
+        }
+
+        function createElem(idListe) {
+
+            var elem = $('#newElem').val();
+
+            var nameListe = $('#' + idListe.data[0] + ' h2').html();
+
+            console.log(nameListe);
+
+            for (let index = 0; index < datas.todoListes.length; index++) {
+                
+                if (datas.todoListes[index].name == nameListe) {
+
+                    var indexElem = datas.todoListes[index].elements.length
+
+                    datas.todoListes[index].elements[indexElem] = elem;
+
+                }
+                
+            }
+
+            $('#listes').remove();
+
+            $('#formulaire').after('<div id="listes"></div>');
+                
+            modification();
+
+        }
+
+        function modification() {
+
+            $.ajax({
+                url: 'http://92.222.69.104/todo/listes',
+                method: 'post',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(datas)
+            }).done(function (d) {
+                showListe(d);     
+            });
+
+        }
+    }
+</script>
 </html>
