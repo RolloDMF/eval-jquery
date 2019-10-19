@@ -183,7 +183,7 @@
 
             $('#ajoutFrame').before('<ul style="position: relative; left: 250px; opacity: 0;" id="liste' + id + '" class="created-listes list-group"></ul>');
             $('#liste' + id).append('<h2 class="list-group-item">' + name + '<button id="' + id + '" class="supprList btn btn-danger" data-liste="' + name + '">X</button></h2>');
-            $('#liste' + id).after('<div class="form-group" id=div' + id + ' class=button-frame></div>');
+            $('#liste' + id).append('<div class="form-group" id=div' + id + ' class=button-frame></div>');
             $('#div' + id).after('<button class="btn btn-success" data-index="' + id + '" data-id="liste' + id + '" data-button="div' + id + '" id="ajouterElem' + id + '"> + </button>')
 
             $('#' + id).click(supprList);
