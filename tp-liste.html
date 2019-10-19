@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="./jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>Tp liste</title>
 </head>
 <body>
@@ -16,26 +19,31 @@
             margin-top: 10px;
         }
         .created-listes{
-            border: solid 1px black;
+            margin: 20px;
         }
         .supprElem, .supprList{
             background-color: red;
-            position: relative;
-            top: 0px;
-            left: 98%;
+            border: none;
+            position: absolute;
+            right: 1%;
         }
     </style>
-
-    <h1>Todo Liste</h1>
-    <div id="formulaire">
-        <label for="utilisateur">Loging</label>
-        <input type="text" name="utilisateur" id="utilisateur">
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password">
-        <button id="inscription">S'inscrir</button>
-        <button id="connexion">Se connecter</button>
+    <div class="container">
+        <h1>Todo Liste</h1>
     </div>
-    <div id="listes">
+    <div id="formulaire" class="container">
+        <div class="form-group">
+            <label for="utilisateur">Loging</label>
+            <input type="text" class="form-control" name="utilisateur" id="utilisateur">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" name="password" id="password">
+        </div>
+        <button id="inscription" class="btn btn-primary">S'inscrir</button>
+        <button id="connexion" class="btn btn-primary">Se connecter</button>
+    </div>
+    <div id="listes" class="container">
     </div>
 </body>
 <script>
@@ -87,24 +95,23 @@
                     
                     var listeName =  listes[index]['name'];
 
-                    listeFrame.append('<ul id="liste' + id + '" class="created-listes"></ul>');
+                    listeFrame.append('<ul id="liste' + id + '" class="created-listes list-group"></ul>');
 
                     var elem = listes[index]['elements'];
                     var listeEnCour = $('#liste' + id);
 
-                    listeEnCour.append('<button class="supprList" data-liste="' + listeName + '">X</button>');
-                    listeEnCour.append('<h2>' + listeName + '</h2>');
+                    listeEnCour.append('<h2 class="list-group-item">' + listeName + '<button class="supprList btn btn-danger" data-liste="' + listeName + '">X</button></h2>');
                     
                     for (let j = 0; j < elem.length; j++) {
-                        listeEnCour.append('<li class="element">' + elem[j] + '</li>').append('<button class="supprElem" data-liste="' + listeName + '" data-position="' + j + '">X</button>');
+                        listeEnCour.append('<li class="element list-group-item">' + elem[j] + '<button class="supprElem btn btn-danger" data-liste="' + listeName + '" data-position="' + j + '">X</button></li>');
                         
                     }
 
                     listeEnCour.append('<div id=div' + id + '></div>');
                     
-                    listeEnCour.append('<button data-id="liste' + id + '" data-button="div' + id + '" id="ajouter' + id + '"> + </button>');
+                    listeEnCour.append('<button class="btn btn-success" data-index="' + id + '" data-id="liste' + id + '" data-button="div' + id + '" id="ajouterElem' + id + '"> + </button>');
 
-                    $("#ajouter" + id).click(addElem);
+                    $("#ajouterElem" + id).click(addElem);
 
                     id++;
                 }
@@ -123,6 +130,11 @@
                 for (let index = 0; index < supprListButton.length; index++) {
                     
                     $(supprListButton[index]).click(supprList);
+
+                }
+
+                for (let index = 0; index < supprElemButton.length; index++) {
+
                     $(supprElemButton[index]).click(supprElem);
                     
                 }
@@ -146,15 +158,14 @@
             
             var idDiv = $(this).data('button');
             var idName = $(this).data('id');
+            var index = $(this).data('index');
             var div = $('#' + idDiv);
 
-            div.prepend('<input type="text" id="newElem">');
-            div.prepend('<button id="validNewElem">Valider</button>');
-            div.prepend('<h3>Nommez votre element liste</h3>');
+            div.prepend('<div class="form-group"><label>Nommez votre element liste</label><input type="text" class="form-control" id="newElem"><button id="validNewElem">Valider</button></div>');
 
             $(this).hide();
 
-            $("#validNewElem").click([idName], createElem);
+            $("#validNewElem").click([idName, index], createElem);
 
         }
         
@@ -177,10 +188,15 @@
         function createElem(idListe) {
 
             var elem = $('#newElem').val();
-
+            var position = datas.todoListes[idListe.data[1]].elements.length + 1;
             var nameListe = $('#' + idListe.data[0] + ' h2').html();
 
-            console.log(nameListe);
+            console.log(elem);
+            console.log(position);
+            
+            
+
+            $('#' + idListe.data[0]).prepend('<li class="element list-group-item">' + elem + ' <button class="supprElem btn btn-danger" data-liste="' + nameListe + ' " data-position="' + position + '">X</button> </li>');
 
             for (let index = 0; index < datas.todoListes.length; index++) {
                 
@@ -194,10 +210,9 @@
                 
             }
 
-            $('#listes').remove();
+            $(this).parent().remove();
+            $('#ajouterElem').show();
 
-            $('#formulaire').after('<div id="listes"></div>');
-                
             modification();
 
         }
@@ -209,8 +224,11 @@
                 method: 'post',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(datas)
-            }).done(function (d) {
-                showListe(d);     
+            }).done(function () {
+                console.log('success'); 
+            }).fail(function () {
+                console.log('fail');
+                   
             });
 
         }
@@ -219,27 +237,40 @@
 
             var name = $(this).data('liste');
 
-            console.log(name);
-            console.log(this);
-            
-
+            $(this).parent().parent().fadeOut(1000);
 
             for (let i = 0; i < datas.todoListes.length; i++) {
-                console.log(datas.todoListes[i].name);
                 
                 if (datas.todoListes[i].name == name) {
                     datas.todoListes.splice([i],1);
                 }
                 
             }
-
-            console.log(datas);
             
+            //modification();
 
         }
 
         function supprElem() {
-            console.log('elem'); 
+             
+            var name = $(this).data('liste');
+            var position = $(this).data('position');
+
+            console.log($(this).parent());
+            
+
+            $(this).parent().fadeOut(1000);
+
+            for (let i = 0; i < datas.todoListes.length; i++) {
+                
+                if (datas.todoListes[i].name == name) {
+                    datas.todoListes[i].elements.splice([position],1);
+                }
+                
+            }
+            
+            //modification();
+
         }
     }
 </script>
