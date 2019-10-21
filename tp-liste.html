@@ -61,6 +61,7 @@
         var password = $('#password').val();
         var typeConnexion = $(this).attr('id');
 
+        //ici on crée la variable data qui contiendra l objet data recupéré de l API a la connexion
         var datas;
         
         if (typeConnexion == 'inscription') {
@@ -69,6 +70,8 @@
                 url: "http://92.222.69.104/todo/create/" + utilisateur + "/" + password
             }).done(function(d) {
                 alert('Bienvenue ' + utilisateur);
+                
+                //une fois l utilisateur crée, on le connecte automatiquement
                 $.ajax({
                     url: "http://92.222.69.104/todo/listes",
                     headers: { "login": utilisateur, "password": password }
@@ -179,7 +182,6 @@
         function createList() {
 
             var name = $('#newListe').val();
-            var index = datas.todoListes.length;
 
             $('#ajoutFrame').before('<ul style="position: relative; left: 250px; opacity: 0;" id="liste' + id + '" class="created-listes list-group"></ul>');
             $('#liste' + id).append('<h2 class="list-group-item">' + name + '<button id="' + id + '" class="supprList btn btn-danger" data-liste="' + name + '">X</button></h2>');
@@ -193,7 +195,7 @@
 
             id++
             
-            datas.todoListes[index] = { "name": name, "elements": [] };
+            datas.todoListes.push({ "name": name, "elements": [] });
 
             $(this).parent().remove();
             $('#ajouter').fadeIn(500);
@@ -202,20 +204,20 @@
    
         }
 
-        function createElem(idListe) {
+        function createElem(dataElem) {
 
             var elem = $('#newElem').val();
-            var nameListe = ($('#' + idListe.data[0] + ' h2').html()).split('<')[0];
+            var nameListe = ($('#' + dataElem.data[0] + ' h2').html()).split('<')[0];
             
 
-            $('#' + idListe.data[2]).before('<li style="left: 250px; opacity: 0;" id=elem-' + idListe.data[1] + '-' + idElem + ' class="element list-group-item">' + elem + '</li>');
-            $('#elem-' + idListe.data[1] + '-' + idElem).append('<button id="' + id + '" class="supprElem btn btn-danger" data-liste="' + nameListe + '" data-position="' + idElem + '">X</button>');
+            $('#' + dataElem.data[2]).before('<li style="left: 250px; opacity: 0;" id=elem-' + dataElem.data[1] + '-' + idElem + ' class="element list-group-item">' + elem + '</li>');
+            $('#elem-' + dataElem.data[1] + '-' + idElem).append('<button id="' + id + '" class="supprElem btn btn-danger" data-liste="' + nameListe + '" data-position="' + idElem + '">X</button>');
 
             $('#'+ id).click(supprElem);
 
             id++;
             
-            $('#elem-' + idListe.data[1] + '-' + idElem).animate({left: '0px', opacity: 1}, 1000);
+            $('#elem-' + dataElem.data[1] + '-' + idElem).animate({left: '0px', opacity: 1}, 1000);
 
             idElem++;
 
@@ -223,9 +225,7 @@
                 
                 if (datas.todoListes[index].name == nameListe) {
 
-                    var indexElem = datas.todoListes[index].elements.length
-
-                    datas.todoListes[index].elements[indexElem] = elem;
+                    datas.todoListes[index].elements.push(elem);
 
                 }
                 
@@ -233,7 +233,7 @@
 
             $(this).parent().remove();
             
-            $('#' + idListe.data[3]).show(1000);
+            $('#' + dataElem.data[3]).show(1000);
 
             modification();
 
@@ -247,7 +247,7 @@
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(datas)
             }).done(function () {
-                console.log('success'); 
+                console.log('success');
             }).fail(function () {
                 console.log('fail');    
             });
